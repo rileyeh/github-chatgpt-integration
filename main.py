@@ -21,7 +21,7 @@ def code_review(parameters: dict):
             content = repo.get_contents(filename, ref=commit.sha).decoded_content
 
             try:
-                client = parameters['openai_client']
+                client = parameters['client']
                 response = client.chat.completions.create(model=parameters['model'],
                 messages=[
                     {
