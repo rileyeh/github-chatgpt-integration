@@ -1,11 +1,10 @@
 import argparse
 from openai import OpenAI
-
-client = OpenAI(api_key=args.openai_api_key)
 import os
 import requests
 from github import Github, PullRequest
 
+client = OpenAI(api_key=args.openai_api_key)
 github_client: Github
 parameters: dict
 
