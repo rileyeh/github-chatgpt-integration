@@ -4,6 +4,8 @@ import os
 import requests
 from github import Github, PullRequest
 
+parser = argparse.ArgumentParser()
+args = parser.parse_args()
 client = OpenAI(api_key=args.openai_api_key)
 github_client: Github
 parameters: dict
@@ -43,7 +45,7 @@ def make_prompt() -> str:
     return review_prompt
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+
 
     parser.add_argument('--openai-api-key', help='Your OpenAI API Key')
     parser.add_argument('--github-token', help='Your Github Token')
@@ -52,7 +54,6 @@ if __name__ == "__main__":
     parser.add_argument('--openai-temperature', default=0.0, help='Sampling temperature to use. Higher values means the model will take more risks. Recommended: 0.5')
     parser.add_argument('--openai-max-tokens', default=4096, help='The maximum number of tokens to generate in the completion.')
 
-    args = parser.parse_args()
 
     github_client = Github(args.github_token)
 
