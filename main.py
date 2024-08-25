@@ -1,5 +1,7 @@
 import argparse
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=args.openai_api_key)
 import os
 import requests
 from github import Github, PullRequest
@@ -21,18 +23,16 @@ def code_review(parameters: dict):
             content = repo.get_contents(filename, ref=commit.sha).decoded_content
 
             try:
-                response = openai.ChatCompletion.create(
-                    model=parameters['model'],
-                    messages=[
-                        {
-                            "role" : "user",
-                            "content" : (f"{parameters['prompt']}:\n```{content}```")
-                        }
-                    ],
-                    temperature=parameters['temperature']
-                )
+                response = client.chat.completions.create(model=parameters['model'],
+                messages=[
+                    {
+                        "role" : "user",
+                        "content" : (f"{parameters['prompt']}:\n```{content}```")
+                    }
+                ],
+                temperature=parameters['temperature'])
 
-                pull_request.create_issue_comment(f"Review for `{file.filename}` file:\n {response['choices'][0]['message']['content']}")
+                pull_request.create_issue_comment(f"Review for `{file.filename}` file:\n {response.choices[0].message.content}")
             except Exception as ex:
                 message = f"🚨 Fail code review process for file **{filename}**.\n\n`{str(ex)}`"
                 pull_request.create_issue_comment(message)
@@ -52,10 +52,9 @@ if __name__ == "__main__":
     parser.add_argument('--openai-engine', default="gpt-4o", help='GPT-4o model to use. Options: text-davinci-003, text-davinci-002, text-babbage-001, text-curie-001, text-ada-001')
     parser.add_argument('--openai-temperature', default=0.0, help='Sampling temperature to use. Higher values means the model will take more risks. Recommended: 0.5')
     parser.add_argument('--openai-max-tokens', default=4096, help='The maximum number of tokens to generate in the completion.')
-    
+
     args = parser.parse_args()
 
-    openai.api_key = args.openai_api_key
     github_client = Github(args.github_token)
 
     review_parameters = {
