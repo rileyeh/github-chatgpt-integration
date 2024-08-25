@@ -4,9 +4,6 @@ import os
 import requests
 from github import Github, PullRequest
 
-parser = argparse.ArgumentParser()
-args = parser.parse_args()
-client = OpenAI(api_key=args.openai_api_key)
 github_client: Github
 parameters: dict
 
@@ -24,6 +21,7 @@ def code_review(parameters: dict):
             content = repo.get_contents(filename, ref=commit.sha).decoded_content
 
             try:
+                client = parameters['openai_client']
                 response = client.chat.completions.create(model=parameters['model'],
                 messages=[
                     {
@@ -45,7 +43,7 @@ def make_prompt() -> str:
     return review_prompt
 
 if __name__ == "__main__":
-
+    parser = argparse.ArgumentParser()
 
     parser.add_argument('--openai-api-key', help='Your OpenAI API Key')
     parser.add_argument('--github-token', help='Your Github Token')
@@ -54,15 +52,19 @@ if __name__ == "__main__":
     parser.add_argument('--openai-temperature', default=0.0, help='Sampling temperature to use. Higher values means the model will take more risks. Recommended: 0.5')
     parser.add_argument('--openai-max-tokens', default=4096, help='The maximum number of tokens to generate in the completion.')
 
+    args = parser.parse_args()
 
     github_client = Github(args.github_token)
+
+    openai_client = OpenAI(api_key=args.openai_api_key)
 
     review_parameters = {
         "pr_id" : int(args.github_pr_id),
         "prompt" : make_prompt(),
         "temperature" : float(args.openai_temperature),
         "max_tokens" : int(args.openai_max_tokens),
-        "model" : args.openai_engine
+        "model" : args.openai_engine,
+        "client" : openai_client
     }
 
     code_review(parameters=review_parameters)
