@@ -38,7 +38,8 @@ def code_review(parameters: dict):
 
 
 def make_prompt() -> str:
-    review_prompt = f"You are a manager of a new hire who is submitting code for a project you're working on. You will be reviewing the new hire's code and giving feedback on how well the code aligns with the goal of the project as well as suggestions about their code and how to improve. You should give feedback on how well their code follows industry best practices. You should not give them the answers to any problems, but should point out where there is room for improvement and perhaps give advice on where to look, but do not give them the solution. Generate your response in markdown format"
+    review_prompt = f"Review the new code submitted in this pull request in 3 sentences or less. Make sure to note if there are any problems that need to be fixed."
+    # review_prompt = f"You are a manager of a new hire who is submitting code for a project you're working on. You will be reviewing the new hire's code and giving feedback on how well the code aligns with the goal of the project as well as suggestions about their code and how to improve. You should give feedback on how well their code follows industry best practices. You should not give them the answers to any problems, but should point out where there is room for improvement and perhaps give advice on where to look, but do not give them the solution. Generate your response in markdown format"
 
     return review_prompt
 
